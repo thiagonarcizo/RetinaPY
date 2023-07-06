@@ -1,4 +1,11 @@
-pycm
-matplotlib
-sklearn
-opencv
+keras==2.12.0
+matplotlib==3.7.1
+numpy==1.22.3
+opencv_python==4.8.0.74
+pandas==1.4.3
+pycm==4.0
+PySide6==6.5.1.1
+scikit_learn==1.3.0
+seaborn==0.12.2
+tensorflow==2.13.0
+tensorflow_intel==2.12.0
