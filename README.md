@@ -4,6 +4,11 @@ GUI amigável para predição de eventos adversos envolvendo análise de imagem 
 Utiliza o modelo pré-treinado [Kermany](https://www.sciencedirect.com/science/article/pii/S0092867418301545), o qual dispõe de milhares de imagens de OCTs para treinamento da IA.
 
 
+##Como usar:
+
+Baixar o modelo já treinado pelo link: [Download](https://drive.google.com/file/d/1OGGOJtx-nzUfo4DZMC6yGf7e3zvKzAIg/view?usp=sharing)
+
+
 ## Descrição
 
  A IA foi treinada para gerar 4 tipos de outputs:
