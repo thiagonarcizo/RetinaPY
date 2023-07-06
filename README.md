@@ -1,6 +1,6 @@
 # RetinaPY
 
-GUI amigável para predição de eventos adversos envolvendo análise de imagem de Tomografia de Coerência Óptica (OCT).
+GUI amigável para predição de eventos adversos envolvendo análise de imagem de Tomografia de Coerência Óptica (OCT). \
 Utiliza o modelo pré-treinado [Kermany](https://www.sciencedirect.com/science/article/pii/S0092867418301545), o qual dispõe de milhares de imagens de OCTs para treinamento da IA.
 
 
