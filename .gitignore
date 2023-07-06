@@ -1,2 +1,4 @@
 kermany.hdf5
-/ia/kermany.hdf5
+ia/kermany.hdf5
+__pycache__/
+ia/__pycache__/
