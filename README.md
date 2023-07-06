@@ -20,11 +20,6 @@ Utiliza o modelo pré-treinado [Kermany](https://www.sciencedirect.com/science/a
 ![Print de tela do programa em funcionamento](https://i.imgur.com/hftJoc4.png)
 
 
-
-> -   S. A. Kamran, S. Saha, A. S. Sabbir, A. Tavakkoli, "Optic-Net: A Novel Convolutional Neural Network for Diagnosis of Retinal Diseases from Optical Tomography Images," DOI: 10.1109/ICMLA.2019.00165 (2019)
-> - Disponível em: [https://github.com/SharifAmit/OpticNet-71](https://github.com/SharifAmit/OpticNet-71)
-
-
 ## Log em .csv
 
 O programa salva em .csv os outputs em ordem cronológica. Contém a probabilidade de cada condição para cada foto selecionada.
