@@ -8,7 +8,7 @@ Utiliza o modelo pré-treinado [Kermany](https://www.sciencedirect.com/science/a
 
 Baixar o modelo já treinado pelo link: [Download](https://drive.google.com/file/d/1OGGOJtx-nzUfo4DZMC6yGf7e3zvKzAIg/view?usp=sharing) \
 OBS: **modelo precisa estar no mesmo diretório raiz da aplicação!** \
-Rodar, no diretório raiz, pip install -r requirements.txt
+Rodar, no diretório raiz, ```pip install -r requirements.txt```
 
 ## Descrição
 
