@@ -8,7 +8,7 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QLabel, QMainWindow, QMenu,
     QMenuBar, QPushButton, QSizePolicy, QStatusBar,
-    QWidget, QFileDialog, QFrame)
+    QWidget, QFileDialog, QMessageBox)
 import sys
 import os
 
@@ -24,15 +24,69 @@ class Ui_MainWindow(QWidget):
         output = 'Condição: {} | {} de probabilidade.'.format(inference.get_pred(a[0], a[1])[0], "{}%".format(inference.get_pred(a[0], a[1])[1]))
         self.label_3.setPixmap(pixmap)
         self.label_3.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.label_2.setText(QCoreApplication.translate("MainWindow", output, None))
+        self.label_2.setText(output)
         self.label_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
         prev = inference.Prev(path=dir, names=inference.get_classes(a[1]), probs=inference.get_preds(a[0]))
         prev.salvar()
+        self.pushButton2.setVisible(True)
+    
+
+
+    '''*******************
+    CLIQUE DO BOTÃO DE MAIS DETALHES QUE APARECE APÓS RODAR A PREVISÃO:
+    ideia:
+    - mostrar um dialog message mostrando todas as probabilidades e as classes (pandas)
+    *******************'''
+    def on_button_click2(self):
+        pass
+
+    
+    '''*******************
+    CLIQUE DO BOTÃO DE LIMPAR O HISTÓRICO - JÁ ESTÁ PRONTO E FUNCIONANDO!:
+    *******************'''
+    def limparTodas(self):
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Deletando o histórico")
+        dlg.setText("Tem certeza de que deseja deletar o histórico?")
+        dlg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        dlg.setIcon(QMessageBox.Icon.Question)
+        button = dlg.exec()
+        if button == QMessageBox.Yes:
+            try:
+                os.remove("prev.csv")
+            except:
+                print("Erro ao deletar o arquivo prev.csv (Não encontrado)")
+        else:
+            None
+
+
+    '''*******************
+    CLIQUE DO BOTÃO DE ABRIR O HISTÓRICO PELO MENU:
+    ideia:
+    - filtrar os dados com pandas e mostrá-los de uma forma visualmente agradável
+    *******************'''
+    def abrirPrev(self):
+        pass
+
+
+    '''*******************
+    CLIQUE DO BOTÃO DE AJUDA PELO MENU (deixar por último):
+    *******************'''
+    def ajuda(self):
+        pass
+
+
+    '''*******************
+    CLIQUE DO BOTÃO DE CRÉDITOS PELO MENU (deixar por último):
+    *******************'''
+    def creditos(self):
+        pass
+
 
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(902, 674)
+        MainWindow.resize(902, 744)
         MainWindow.setContextMenuPolicy(Qt.DefaultContextMenu)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
@@ -46,6 +100,15 @@ class Ui_MainWindow(QWidget):
         self.pushButton.setObjectName(u"pushButton")
         self.pushButton.setGeometry(QRect(540, 30, 121, 41))
         self.pushButton.clicked.connect(self.on_button_click)
+
+        self.pushButton2 = QPushButton(self.centralwidget)
+        self.pushButton2.setObjectName(u"pushButton2")
+        self.pushButton2.setFont(QFont("Arial", 12))
+        self.pushButton2.setText(u"Mais detalhes")
+        self.pushButton2.setVisible(False)
+        self.pushButton2.setGeometry(QRect(385, 645, 131, 51))
+        self.pushButton2.clicked.connect(self.on_button_click2)
+
         self.label_2 = QLabel(self.centralwidget)
         self.label_2.setObjectName(u"label_2")
         self.label_2.setGeometry(QRect(0, 570, 901, 61))
@@ -59,32 +122,43 @@ class Ui_MainWindow(QWidget):
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
         self.menubar.setGeometry(QRect(0, 0, 902, 22))
-        self.menuP_gina_inicial = QMenu(self.menubar)
-        self.menuP_gina_inicial.setObjectName(u"menuP_gina_inicial")
-        self.menuCr_ditos = QMenu(self.menubar)
-        self.menuCr_ditos.setObjectName(u"menuCr_ditos")
+        self.help = QMenu(self.menubar)
+        self.help.setObjectName(u"help")
+        self.prev = QMenu(self.menubar)
+        self.prev.setObjectName(u"prev")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
-        self.menubar.addAction(self.menuP_gina_inicial.menuAction())
-        self.menubar.addAction(self.menuCr_ditos.menuAction())
-        self.menuCr_ditos.addSeparator()
+        self.menubar.addAction(self.help.menuAction())
+        self.menubar.addAction(self.prev.menuAction())
+        self.prev.addSeparator()
 
+        MainWindow.setWindowTitle(u"In\u00edcio")
+        self.label.setText(u"Selecione o arquivo de imagem...")
+        self.pushButton.setText(u"Selecionar")
+        self.label_2.setText(u"")
+        self.help.setTitle(u"Sobre")
+        self.prev.setTitle(u"Previs\u00f5es anteriores")
 
-        self.retranslateUi(MainWindow)
+        helpAct = QAction('Ajuda', self)
+        credAct = QAction('Cr\u00e9ditos', self)
 
-        QMetaObject.connectSlotsByName(MainWindow)
+        self.help.addAction(helpAct)
+        self.help.addAction(credAct)
+
+        abrirAct = QAction('Abrir', self)
+        delAct = QAction('Deletar', self)
+
+        self.prev.addAction(abrirAct)
+        self.prev.addAction(delAct)
+
+        abrirAct.triggered.connect(self.abrirPrev)
+        delAct.triggered.connect(self.limparTodas)
+        helpAct.triggered.connect(self.ajuda)
+        credAct.triggered.connect(self.creditos)
     # setupUi
-
-    def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"In\u00edcio", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"Selecione o arquivo de imagem...", None))
-        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Selecionar", None))
-        self.label_2.setText(QCoreApplication.translate("MainWindow", u"", None))
-        self.menuP_gina_inicial.setTitle(QCoreApplication.translate("MainWindow", u"P\u00e1gina inicial", None))
-        self.menuCr_ditos.setTitle(QCoreApplication.translate("MainWindow", u"Cr\u00e9ditos", None))
     # retranslateUi
 
 
