@@ -97,17 +97,27 @@ class Ui_MainWindow(QWidget):
 
 
     '''*******************
-    CLIQUE DO BOTÃO DE AJUDA PELO MENU (deixar por último):
+    CLIQUE DO BOTÃO DE AJUDA PELO MENU:
     *******************'''
     def ajuda(self):
-        pass
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Ajuda")
+        dlg.setTextFormat(Qt.TextFormat.RichText)
+        dlg.setText('<p align=\"justify\">GUI amigável para predição de eventos adversos envolvendo análise de imagem de Tomografia de Coerência Óptica (OCT).<br>Utiliza o modelo pré-treinado Kermany, o qual dispõe de milhares de imagens de OCTs para treinamento da IA.</p><br><br>A Inteligência Artificial foi treinada para gerar 4 tipos de outputs:<br><b>- Diabetic Macular Edema (DME);<br>- Choroidal Neovascularization (CNV);<br>- Drusen;<br>- Normal.</b><br><br>* Informações do modelo: 288 camadas; 11.972.940 número total de weights; eficácia de 99,8%')
+        dlg.setFont(QFont("Arial", 12))
+        dlg.exec()
 
 
     '''*******************
-    CLIQUE DO BOTÃO DE CRÉDITOS PELO MENU (deixar por último):
+    CLIQUE DO BOTÃO DE CRÉDITOS PELO MENU:
     *******************'''
     def creditos(self):
-        pass
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Cr\u00e9ditos")
+        dlg.setTextFormat(Qt.TextFormat.RichText)
+        dlg.setText('<p align=\"justify\">Idealizado e feito por <a href=\"https://github.com/thiagonarcizo/\">Thiago Narcizo</a> e por <a href=\"https://github.com/mathfaria\">Matheus Faria</a><br>com base no modelo de IA pré-treinada de OCT de <a href=\"https://www.sciencedirect.com/science/article/pii/S0092867418301545\">Kermany</a>.</p><br><br><a href=\"https://github.com/thiagonarcizo/RetinaPY\">Link do projeto no GitHub</a>')
+        dlg.setFont(QFont("Arial", 12))
+        dlg.exec()
 
 
     def setupUi(self, MainWindow):
