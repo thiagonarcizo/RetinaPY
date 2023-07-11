@@ -8,14 +8,24 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QLabel, QMainWindow, QMenu,
     QMenuBar, QPushButton, QSizePolicy, QStatusBar,
-    QWidget, QFileDialog, QMessageBox)
+    QWidget, QFileDialog, QMessageBox, QStackedWidget, QVBoxLayout)
 
 import sys
 import os
+import subprocess
 
 import ia.inference as inference
 
 import pandas as pd
+
+'''# Verifica se o arquivo requirements.txt existe
+
+DESMARCAR COMO COMENTÁRIO APENAS NA FINAL RELEASE!!!
+
+if os.path.isfile('requirements.txt'):
+    # Instala as dependências usando pip
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
+    os.remove('requirements.txt')'''
 
 class Ui_MainWindow(QWidget):
     def on_button_click(self):
@@ -93,6 +103,14 @@ class Ui_MainWindow(QWidget):
     - filtrar os dados com pandas e mostrá-los de uma forma visualmente agradável
     *******************'''
     def abrirPrev(self):
+        self.w = None
+        MainWindow.show_new_window(self)
+
+
+    '''*******************
+    CLIQUE DO BOTÃO DE MOSTRAR O INÍICIO PELO MENU:
+    *******************'''
+    def inicioMenu(self):
         pass
 
 
@@ -118,6 +136,7 @@ class Ui_MainWindow(QWidget):
         dlg.setText('<p align=\"justify\">Idealizado e feito por <a href=\"https://github.com/thiagonarcizo/\">Thiago Narcizo</a> e por <a href=\"https://github.com/mathfaria\">Matheus Faria</a><br>com base no modelo de IA pré-treinada de OCT de <a href=\"https://www.sciencedirect.com/science/article/pii/S0092867418301545\">Kermany</a>.</p><br><br><a href=\"https://github.com/thiagonarcizo/RetinaPY\">Link do projeto no GitHub</a>')
         dlg.setFont(QFont("Arial", 12))
         dlg.exec()
+
 
 
     def setupUi(self, MainWindow):
@@ -168,8 +187,8 @@ class Ui_MainWindow(QWidget):
         self.statusbar.setObjectName(u"statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
-        self.menubar.addAction(self.help.menuAction())
         self.menubar.addAction(self.prev.menuAction())
+        self.menubar.addAction(self.help.menuAction())
         self.prev.addSeparator()
 
         MainWindow.setWindowTitle(u"In\u00edcio")
@@ -195,20 +214,64 @@ class Ui_MainWindow(QWidget):
         delAct.triggered.connect(self.limparTodas)
         helpAct.triggered.connect(self.ajuda)
         credAct.triggered.connect(self.creditos)
-    # setupUi
-    # retranslateUi
 
-
+class Ui_PrevWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+        self.resize(702, 544)
+        self.setFixedSize(self.size())
+        self.setWindowFlags(self.windowFlags() & Qt.CustomizeWindowHint)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowMinMaxButtonsHint)
+        self.setWindowFlag(Qt.WindowStaysOnTopHint, True)
+        self.setWindowTitle('Previs\u00f5es anteriores')
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.ui_prev = Ui_PrevWindow()
         self.setFixedSize(self.size())
 
+
+    def show_new_window(self):
+        if self.w is None:
+            self.w = Ui_PrevWindow()
+        self.w.show()
+
+
+    def get_darkModePalette( app=None ) :
+        
+        darkPalette = app.palette()
+        darkPalette.setColor( QPalette.Window, QColor( 53, 53, 53 ) )
+        darkPalette.setColor( QPalette.WindowText, Qt.white )
+        darkPalette.setColor( QPalette.Disabled, QPalette.WindowText, QColor( 127, 127, 127 ) )
+        darkPalette.setColor( QPalette.Base, QColor( 42, 42, 42 ) )
+        darkPalette.setColor( QPalette.AlternateBase, QColor( 66, 66, 66 ) )
+        darkPalette.setColor( QPalette.ToolTipBase, Qt.white )
+        darkPalette.setColor( QPalette.ToolTipText, Qt.white )
+        darkPalette.setColor( QPalette.Text, Qt.white )
+        darkPalette.setColor( QPalette.Disabled, QPalette.Text, QColor( 127, 127, 127 ) )
+        darkPalette.setColor( QPalette.Dark, QColor( 35, 35, 35 ) )
+        darkPalette.setColor( QPalette.Shadow, QColor( 20, 20, 20 ) )
+        darkPalette.setColor( QPalette.Button, QColor( 53, 53, 53 ) )
+        darkPalette.setColor( QPalette.ButtonText, Qt.white )
+        darkPalette.setColor( QPalette.Disabled, QPalette.ButtonText, QColor( 127, 127, 127 ) )
+        darkPalette.setColor( QPalette.BrightText, Qt.red )
+        darkPalette.setColor( QPalette.Link, QColor( 42, 130, 218 ) )
+        darkPalette.setColor( QPalette.Highlight, QColor( 42, 130, 218 ) )
+        darkPalette.setColor( QPalette.Disabled, QPalette.Highlight, QColor( 80, 80, 80 ) )
+        darkPalette.setColor( QPalette.HighlightedText, Qt.white )
+        darkPalette.setColor( QPalette.Disabled, QPalette.HighlightedText, QColor( 127, 127, 127 ), )
+        
+        return darkPalette
+
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    app = QApplication(sys.argv + ['-platform'])
+    app.setStyle('Fusion')
+    #app.setPalette(MainWindow.get_darkModePalette(app))
 
     window = MainWindow()
     window.show()
