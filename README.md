@@ -24,7 +24,7 @@ A aplicação que deve ser executada é a ```gui.pyw``` (Caso não seja Windos, 
  
 **Informações do modelo:**  288 camadas; 11.972.940 número total de weights; eficácia de 99,8%
 
-![Print de tela do programa em funcionamento](https://i.imgur.com/hftJoc4.png)
+![Print de tela do programa em funcionamento](https://i.imgur.com/NT2Hktl.png)
 
 
 ## Log em .csv
