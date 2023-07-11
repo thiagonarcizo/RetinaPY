@@ -8,6 +8,7 @@ import cv2
 import numpy as np
 import seaborn as sns
 import pandas as pd
+import datetime as dt
 
 
 class Prev:
@@ -15,14 +16,15 @@ class Prev:
         self.path = path
         self.names = names
         self.probs = probs
+        self.date = dt.datetime.now()
 
     def salvar(self):
         try:
             ds = pd.read_csv("prev.csv", sep=";")
         except:
-            ds = pd.DataFrame(columns=["path", "names", "probs"])
+            ds = pd.DataFrame(columns=["path", "names", "probs", "date"])
             ds.to_csv("prev.csv", sep=";", index=False)
-        new_row = pd.DataFrame({"path": [self.path], "names": [self.names], "probs": [self.probs]})
+        new_row = pd.DataFrame({"path": [self.path], "names": [self.names], "probs": [self.probs], "date": [self.date]})
         ds = pd.concat([ds, new_row], ignore_index=True)
         ds.to_csv("prev.csv", sep=";", index=False)
 
