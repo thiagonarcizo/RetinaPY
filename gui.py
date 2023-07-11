@@ -18,6 +18,13 @@ import ia.inference as inference
 
 import pandas as pd
 
+import ctypes
+
+import platform
+if platform.system() == 'Windows':
+    myappid = 'xyz.narcizo' # arbitrary string
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+
 '''# Verifica se o arquivo requirements.txt existe
 
 DESMARCAR COMO COMENTÁRIO APENAS NA FINAL RELEASE!!!
@@ -50,6 +57,7 @@ class Ui_MainWindow(QWidget):
     *******************'''
     def on_button_click2(self):
         dlg = QMessageBox(self)
+        dlg.setWindowIcon(QIcon('icone.png'))
         dlg.setWindowTitle("Detalhes do resultado")
 
         ds = pd.read_csv("prev.csv", sep=";")
@@ -71,7 +79,7 @@ class Ui_MainWindow(QWidget):
             if (prob_ordenado[i] <= 0.0001):
                 prob_ordenado[i] = "\u22450"
             tempStr = "{}   \u2192   {}%".format(nome_ordenado[i], prob_ordenado[i])
-            x += tempStr + "\n"
+            x += tempStr + "\n\n"
 
         dlg.setText(x)
         dlg.setFont(QFont("Arial", 12))
@@ -83,6 +91,7 @@ class Ui_MainWindow(QWidget):
     *******************'''
     def limparTodas(self):
         dlg = QMessageBox(self)
+        dlg.setWindowIcon(QIcon('icone.png'))
         dlg.setWindowTitle("Deletando o histórico")
         dlg.setText("Tem certeza de que deseja deletar o histórico?")
         dlg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
@@ -119,10 +128,11 @@ class Ui_MainWindow(QWidget):
     *******************'''
     def ajuda(self):
         dlg = QMessageBox(self)
+        dlg.setWindowIcon(QIcon('icone.png'))
         dlg.setWindowTitle("Ajuda")
         dlg.setTextFormat(Qt.TextFormat.RichText)
         dlg.setText('<p align=\"justify\">GUI amigável para predição de eventos adversos envolvendo análise de imagem de Tomografia de Coerência Óptica (OCT).<br>Utiliza o modelo pré-treinado Kermany, o qual dispõe de milhares de imagens de OCTs para treinamento da IA.</p><br><br>A Inteligência Artificial foi treinada para gerar 4 tipos de outputs:<br><b>- Diabetic Macular Edema (DME);<br>- Choroidal Neovascularization (CNV);<br>- Drusen;<br>- Normal.</b><br><br>* Informações do modelo: 288 camadas; 11.972.940 número total de weights; eficácia de 99,8%')
-        dlg.setFont(QFont("Arial", 12))
+        dlg.setFont(QFont("Arial", 16))
         dlg.exec()
 
 
@@ -131,10 +141,11 @@ class Ui_MainWindow(QWidget):
     *******************'''
     def creditos(self):
         dlg = QMessageBox(self)
+        dlg.setWindowIcon(QIcon('icone.png'))
         dlg.setWindowTitle("Cr\u00e9ditos")
         dlg.setTextFormat(Qt.TextFormat.RichText)
         dlg.setText('<p align=\"justify\">Idealizado e feito por <a href=\"https://github.com/thiagonarcizo/\">Thiago Narcizo</a> e por <a href=\"https://github.com/mathfaria\">Matheus Faria</a><br>com base no modelo de IA pré-treinada de OCT de <a href=\"https://www.sciencedirect.com/science/article/pii/S0092867418301545\">Kermany</a>.</p><br><br><a href=\"https://github.com/thiagonarcizo/RetinaPY\">Link do projeto no GitHub</a>')
-        dlg.setFont(QFont("Arial", 12))
+        dlg.setFont(QFont("Arial", 16))
         dlg.exec()
 
 
@@ -220,6 +231,7 @@ class Ui_PrevWindow(QWidget):
         super().__init__()
         layout = QVBoxLayout()
         self.setLayout(layout)
+        self.setWindowIcon(QIcon('icone.png'))
         self.resize(702, 544)
         self.setFixedSize(self.size())
         self.setWindowFlags(self.windowFlags() & Qt.CustomizeWindowHint)
@@ -274,6 +286,7 @@ if __name__ == "__main__":
     #app.setPalette(MainWindow.get_darkModePalette(app))
 
     window = MainWindow()
+    app.setWindowIcon(QIcon('icone.ico'))
     window.show()
 
     sys.exit(app.exec())
