@@ -12,10 +12,20 @@ from PySide6.QtWidgets import (QApplication, QLabel, QMainWindow, QMenu,
 
 import sys
 import os
+import subprocess
 
 import ia.inference as inference
 
 import pandas as pd
+
+'''# Verifica se o arquivo requirements.txt existe
+
+DESMARCAR COMO COMENTÁRIO APENAS NA FINAL RELEASE!!!
+
+if os.path.isfile('requirements.txt'):
+    # Instala as dependências usando pip
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
+    os.remove('requirements.txt')'''
 
 class Ui_MainWindow(QWidget):
     def on_button_click(self):
