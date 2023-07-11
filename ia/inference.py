@@ -45,7 +45,6 @@ def get_pred(preds, classes):
     return str(classes[argM]), round(float(preds[argM]), 2)
 
 def print_pred(preds,classes):
-
     preds = preds.ravel()
 
     y = len(classes)
@@ -58,7 +57,7 @@ def print_pred(preds,classes):
         
         else:
             None
-    print(x)
+    return x
 
 def image_preprocessing(img):
     img = cv2.imread(img)
@@ -76,16 +75,8 @@ def inference(img):
     K.clear_session()
     model = load_model('kermany.hdf5')
 
-    preds = model.predict(processsed_img,batch_size=None,steps=1)
+    preds = model.predict(processsed_img,batch_size=None,steps=1, verbose=0)
   
     print_pred(preds*100,classes)
 
     return preds*100, classes
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--imgpath', type=str, required=True, help='path/to/image')
-    args = parser.parse_args()
-    inference(args.imgpath)
-
