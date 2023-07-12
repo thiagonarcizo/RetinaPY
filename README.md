@@ -29,7 +29,7 @@ A aplicação que deve ser executada é a ```gui.pyw``` (Caso não seja Windos, 
 ![Print de tela do programa em funcionamento](https://i.imgur.com/NT2Hktl.png) \
 
 - **Log:** \
-![Print de tela do histórico de outputs do programa](https://i.imgur.com/cVWQrok.png)
+![Print de tela do histórico de outputs do programa](https://i.imgur.com/qEtxaif.png)
 
 
 ## Log em .csv
