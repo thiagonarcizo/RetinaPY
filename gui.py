@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
     QSize, QTime, QUrl, Qt)
@@ -8,11 +10,12 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QLabel, QMainWindow, QMenu,
     QMenuBar, QPushButton, QSizePolicy, QStatusBar,
-    QWidget, QFileDialog, QMessageBox, QStackedWidget, QVBoxLayout)
+    QWidget, QFileDialog, QMessageBox, QStackedWidget, QVBoxLayout, QTableWidget, QHeaderView, QAbstractItemView, QTableWidgetItem)
 
 import sys
 import os
 import subprocess
+from datetime import datetime
 
 import ia.inference as inference
 
@@ -27,7 +30,7 @@ if platform.system() == 'Windows':
 
 '''# Verifica se o arquivo requirements.txt existe
 
-DESMARCAR COMO COMENTÁRIO APENAS NA FINAL RELEASE!!!
+#DESMARCAR COMO COMENTÁRIO APENAS NA FINAL RELEASE!!!
 
 if os.path.isfile('requirements.txt'):
     # Instala as dependências usando pip
@@ -229,8 +232,6 @@ class Ui_MainWindow(QWidget):
 class Ui_PrevWindow(QWidget):
     def __init__(self):
         super().__init__()
-        layout = QVBoxLayout()
-        self.setLayout(layout)
         self.setWindowIcon(QIcon('icone.png'))
         self.resize(702, 544)
         self.setFixedSize(self.size())
@@ -238,6 +239,53 @@ class Ui_PrevWindow(QWidget):
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowMinMaxButtonsHint)
         self.setWindowFlag(Qt.WindowStaysOnTopHint, True)
         self.setWindowTitle('Previs\u00f5es anteriores')
+        self.ds = pd.read_csv('prev.csv', sep=';')
+        self.ds = self.ds[::-1]
+        self.rows = len(self.ds.index)
+        self.columns = len(self.ds.columns)
+        self.table = QTableWidget()
+        self.table.setRowCount(self.rows)
+        self.table.setColumnCount(self.columns)
+        self.table.setHorizontalHeaderLabels(["Imagem", "Condi\u00e7\u00e3o", "Probabilidade (%)", "Data"])
+
+        self.centralwidget = QWidget(self)
+
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+
+        for i in range(self.rows):
+            self.table.setRowHeight(i, 100)
+            font = QFont()
+            font.setPointSize(12)
+            label = QLabel()
+            pixmap = QPixmap(self.ds.iloc[i, 0])
+            label.setPixmap(pixmap)
+            label.setScaledContents(True)
+            self.table.setCellWidget(i, 0, label)
+
+            item1 = QTableWidgetItem(self.ds.iloc[i, 1].replace("[", "").replace("]", "").replace("'","").replace(",","").replace(" ","\n"))
+            item1.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            item1.setFont(font)
+            self.table.setItem(i, 1, item1)
+
+            item2 = QTableWidgetItem(str(self.ds.iloc[i, 2].replace("[", "").replace("]", "").replace("'","").replace(",","").replace(" ","\n")))
+            item2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            item2.setFont(font)
+            self.table.setItem(i, 2, item2)
+
+            data = datetime.strptime(self.ds.iloc[i, 3], "%Y-%m-%d %H:%M:%S.%f").strftime("%d/%m/%Y às %H:%M")
+            item3 = QTableWidgetItem(data)
+            item3.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            item3.setFont(font)
+            self.table.setItem(i, 3, item3)
+
+        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
+        self.vBox = QVBoxLayout(self.centralwidget)
+        self.vBox.addWidget(self.table)
+        self.vBox.setAlignment(Qt.AlignCenter)
+        self.setLayout(self.vBox)
+
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -248,35 +296,36 @@ class MainWindow(QMainWindow):
         self.setFixedSize(self.size())
 
 
+
     def show_new_window(self):
         if self.w is None:
             self.w = Ui_PrevWindow()
         self.w.show()
 
 
-    def get_darkModePalette( app=None ) :
+    def get_darkModePalette(app=None):
         
         darkPalette = app.palette()
-        darkPalette.setColor( QPalette.Window, QColor( 53, 53, 53 ) )
-        darkPalette.setColor( QPalette.WindowText, Qt.white )
-        darkPalette.setColor( QPalette.Disabled, QPalette.WindowText, QColor( 127, 127, 127 ) )
-        darkPalette.setColor( QPalette.Base, QColor( 42, 42, 42 ) )
-        darkPalette.setColor( QPalette.AlternateBase, QColor( 66, 66, 66 ) )
-        darkPalette.setColor( QPalette.ToolTipBase, Qt.white )
-        darkPalette.setColor( QPalette.ToolTipText, Qt.white )
-        darkPalette.setColor( QPalette.Text, Qt.white )
-        darkPalette.setColor( QPalette.Disabled, QPalette.Text, QColor( 127, 127, 127 ) )
-        darkPalette.setColor( QPalette.Dark, QColor( 35, 35, 35 ) )
-        darkPalette.setColor( QPalette.Shadow, QColor( 20, 20, 20 ) )
-        darkPalette.setColor( QPalette.Button, QColor( 53, 53, 53 ) )
-        darkPalette.setColor( QPalette.ButtonText, Qt.white )
-        darkPalette.setColor( QPalette.Disabled, QPalette.ButtonText, QColor( 127, 127, 127 ) )
-        darkPalette.setColor( QPalette.BrightText, Qt.red )
-        darkPalette.setColor( QPalette.Link, QColor( 42, 130, 218 ) )
-        darkPalette.setColor( QPalette.Highlight, QColor( 42, 130, 218 ) )
-        darkPalette.setColor( QPalette.Disabled, QPalette.Highlight, QColor( 80, 80, 80 ) )
-        darkPalette.setColor( QPalette.HighlightedText, Qt.white )
-        darkPalette.setColor( QPalette.Disabled, QPalette.HighlightedText, QColor( 127, 127, 127 ), )
+        darkPalette.setColor(QPalette.Window, QColor(53, 53, 53))
+        darkPalette.setColor(QPalette.WindowText, Qt.white)
+        darkPalette.setColor(QPalette.Disabled, QPalette.WindowText, QColor(127, 127, 127))
+        darkPalette.setColor(QPalette.Base, QColor(42, 42, 42))
+        darkPalette.setColor(QPalette.AlternateBase, QColor(66, 66, 66))
+        darkPalette.setColor(QPalette.ToolTipBase, Qt.white)
+        darkPalette.setColor(QPalette.ToolTipText, Qt.white)
+        darkPalette.setColor(QPalette.Text, Qt.white)
+        darkPalette.setColor(QPalette.Disabled, QPalette.Text, QColor( 127, 127, 127))
+        darkPalette.setColor(QPalette.Dark, QColor(35, 35, 35))
+        darkPalette.setColor(QPalette.Shadow, QColor(20, 20, 20))
+        darkPalette.setColor(QPalette.Button, QColor(53, 53, 53))
+        darkPalette.setColor(QPalette.ButtonText, Qt.white)
+        darkPalette.setColor(QPalette.Disabled, QPalette.ButtonText, QColor(127, 127, 127))
+        darkPalette.setColor(QPalette.BrightText, Qt.red)
+        darkPalette.setColor(QPalette.Link, QColor(42, 130, 218))
+        darkPalette.setColor(QPalette.Highlight, QColor(42, 130, 218))
+        darkPalette.setColor(QPalette.Disabled, QPalette.Highlight, QColor(80, 80, 80))
+        darkPalette.setColor(QPalette.HighlightedText, Qt.white)
+        darkPalette.setColor(QPalette.Disabled, QPalette.HighlightedText, QColor(127, 127, 127),)
         
         return darkPalette
 
