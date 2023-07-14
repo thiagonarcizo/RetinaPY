@@ -20,14 +20,18 @@ if platform.system() == 'Windows':
     myappid = 'xyz.narcizo'
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
-'''# Verifica se o arquivo requirements.txt existe
-
-#DESMARCAR COMO COMENTÁRIO APENAS NA FINAL RELEASE!!!
-
+# Verifica se o arquivo requirements.txt existe
 if os.path.isfile('requirements.txt'):
     # Instala as dependências usando pip
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
-    os.remove('requirements.txt')'''
+    try:
+        subprocess.Popen([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
+        os.remove('requirements.txt')
+    except Exception as e:
+        if platform.system() == 'Windows':
+            os.system('cmd /c echo '+str(e)+' & PAUSE')
+        else:
+            os.system('echo '+str(e)+' && read -n 1 -r -p "Pressione qualquer tecla para continuar..."')
+        sys.exit(1)
 
 class Ui_MainWindow(QWidget):
     def on_button_click(self):
