@@ -1,16 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
-    QCursor, QFont, QFontDatabase, QGradient,
-    QIcon, QImage, QKeySequence, QLinearGradient,
-    QPainter, QPalette, QPixmap, QRadialGradient,
-    QTransform)
-from PySide6.QtWidgets import (QApplication, QLabel, QMainWindow, QMenu,
-    QMenuBar, QPushButton, QSizePolicy, QStatusBar,
-    QWidget, QFileDialog, QMessageBox, QStackedWidget, QVBoxLayout, QTableWidget, QHeaderView, QAbstractItemView, QTableWidgetItem)
+from PySide6.QtCore import (QRect, Qt)
+from PySide6.QtGui import (QAction, QColor, QFont, QIcon, QPalette, QPixmap)
+from PySide6.QtWidgets import (QApplication, QLabel, QMainWindow, QMenu, QMenuBar, QPushButton, QStatusBar, QWidget, QFileDialog, QMessageBox, QVBoxLayout, QTableWidget, QHeaderView, QAbstractItemView, QTableWidgetItem)
 
 import sys
 import os
@@ -25,33 +17,40 @@ import ctypes
 
 import platform
 if platform.system() == 'Windows':
-    myappid = 'xyz.narcizo' # arbitrary string
+    myappid = 'xyz.narcizo'
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
-'''# Verifica se o arquivo requirements.txt existe
-
-#DESMARCAR COMO COMENTÁRIO APENAS NA FINAL RELEASE!!!
-
+# Verifica se o arquivo requirements.txt existe
 if os.path.isfile('requirements.txt'):
     # Instala as dependências usando pip
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
-    os.remove('requirements.txt')'''
+    try:
+        subprocess.Popen([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
+        os.remove('requirements.txt')
+    except Exception as e:
+        if platform.system() == 'Windows':
+            os.system('cmd /c echo '+str(e)+' & PAUSE')
+        else:
+            os.system('echo '+str(e)+' && read -n 1 -r -p "Pressione qualquer tecla para continuar..."')
+        sys.exit(1)
 
 class Ui_MainWindow(QWidget):
     def on_button_click(self):
         file_filter = 'Image File (*.png *.jpg *.jpeg)'
         response = QFileDialog.getOpenFileName(self, 'Abrir o arquivo', os.getcwd(), file_filter)
         dir = str(response).replace("('", "").replace("', 'Image File (*.png *.jpg *.jpeg)')", "")
-        pixmap = QPixmap(dir)
-        a = inference.inference(dir)
-        output = 'Condição: {} | {} de probabilidade.'.format(inference.get_pred(a[0], a[1])[0], "{}%".format(inference.get_pred(a[0], a[1])[1]))
-        self.label_3.setPixmap(pixmap)
-        self.label_3.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        try:
+            pixmap = QPixmap(dir)
+            a = inference.inference(dir)
+            output = 'Condição: {} | {} de probabilidade.'.format(inference.get_pred(a[0], a[1])[0], "{}%".format(inference.get_pred(a[0], a[1])[1]))
+            prev = inference.Prev(path=dir, names=inference.get_classes(a[1]), probs=inference.get_preds(a[0]))
+            prev.salvar()
+            self.pushButton2.setVisible(True)
+            self.label_3.setPixmap(pixmap)
+            self.label_3.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        except:
+            output = ""
         self.label_2.setText(output)
         self.label_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        prev = inference.Prev(path=dir, names=inference.get_classes(a[1]), probs=inference.get_preds(a[0]))
-        prev.salvar()
-        self.pushButton2.setVisible(True)
     
 
 
@@ -134,7 +133,7 @@ class Ui_MainWindow(QWidget):
         dlg.setWindowIcon(QIcon('icone.png'))
         dlg.setWindowTitle("Ajuda")
         dlg.setTextFormat(Qt.TextFormat.RichText)
-        dlg.setText('<p align=\"justify\">GUI amigável para predição de eventos adversos envolvendo análise de imagem de Tomografia de Coerência Óptica (OCT).<br>Utiliza o modelo pré-treinado Kermany, o qual dispõe de milhares de imagens de OCTs para treinamento da IA.</p><br><br>A Inteligência Artificial foi treinada para gerar 4 tipos de outputs:<br><b>- Diabetic Macular Edema (DME);<br>- Choroidal Neovascularization (CNV);<br>- Drusen;<br>- Normal.</b><br><br>* Informações do modelo: 288 camadas; 11.972.940 número total de weights; eficácia de 99,8%')
+        dlg.setText('<p align=\"justify\">GUI amigável para predição de eventos adversos envolvendo análise de imagem de Tomografia de Coerência Óptica (OCT).<br>Utiliza o modelo pré-treinado Kermany, o qual dispõe de milhares de imagens de OCTs para treinamento da IA.</p><br><br>A Inteligência Artificial foi treinada para gerar 4 tipos de outputs:<br><b>- Diabetic Macular Edema (DME);<br>- Choroidal Neovascularization (CNV);<br>- Drusen;<br>- Normal.</b><br><br>* Informações do modelo: 288 camadas; 11.972.940 número total de weights; eficácia de 99,8%<br><br>PS: Toda probabilidade que for igual a 100% é arredondada!')
         dlg.setFont(QFont("Arial", 16))
         dlg.exec()
 
@@ -232,6 +231,7 @@ class Ui_MainWindow(QWidget):
 class Ui_PrevWindow(QWidget):
     def __init__(self):
         super().__init__()
+        self.old_key_state = Qt.NoModifier
         self.setWindowIcon(QIcon('icone.png'))
         self.resize(702, 544)
         self.setFixedSize(self.size())
@@ -257,9 +257,12 @@ class Ui_PrevWindow(QWidget):
             font = QFont()
             font.setPointSize(12)
             label = QLabel()
-            pixmap = QPixmap(self.ds.iloc[i, 0])
-            label.setPixmap(pixmap)
-            label.setScaledContents(True)
+            if os.path.isfile(self.ds.iloc[i, 0]):
+                pixmap = QPixmap(self.ds.iloc[i, 0])
+                label.setPixmap(pixmap)
+                label.setScaledContents(True)
+            else:
+                label.setText('Imagem não encontrada!\n\nLocal anterior:\n'+'('+str(self.ds.iloc[i, 0])+')')
             self.table.setCellWidget(i, 0, label)
 
             item1 = QTableWidgetItem(self.ds.iloc[i, 1].replace("[", "").replace("]", "").replace("'","").replace(",","").replace(" ","\n"))
@@ -285,6 +288,10 @@ class Ui_PrevWindow(QWidget):
         self.vBox.setAlignment(Qt.AlignCenter)
         self.setLayout(self.vBox)
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_W and event.modifiers() & Qt.ControlModifier:
+            self.close()
+
 
 
 class MainWindow(QMainWindow):
@@ -295,6 +302,15 @@ class MainWindow(QMainWindow):
         self.ui_prev = Ui_PrevWindow()
         self.setFixedSize(self.size())
 
+        self.old_key_state = Qt.NoModifier
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_W and event.modifiers() & Qt.ControlModifier:
+            self.close()
+        elif (event.key() == 16777220) or (event.key() == 43):
+            Ui_MainWindow.on_button_click(self)
+        elif event.key() == Qt.Key_H and event.modifiers() & Qt.ControlModifier:
+            Ui_MainWindow.abrirPrev(self)
 
 
     def show_new_window(self):
