@@ -134,7 +134,7 @@ class Ui_MainWindow(QWidget):
         dlg.setWindowIcon(QIcon('icone.png'))
         dlg.setWindowTitle("Ajuda")
         dlg.setTextFormat(Qt.TextFormat.RichText)
-        dlg.setText('<p align=\"justify\">GUI amigável para predição de eventos adversos envolvendo análise de imagem de Tomografia de Coerência Óptica (OCT).<br>Utiliza o modelo pré-treinado Kermany, o qual dispõe de milhares de imagens de OCTs para treinamento da IA.</p><br><br>A Inteligência Artificial foi treinada para gerar 4 tipos de outputs:<br><b>- Diabetic Macular Edema (DME);<br>- Choroidal Neovascularization (CNV);<br>- Drusen;<br>- Normal.</b><br><br>* Informações do modelo: 288 camadas; 11.972.940 número total de weights; eficácia de 99,8%')
+        dlg.setText('<p align=\"justify\">GUI amigável para predição de eventos adversos envolvendo análise de imagem de Tomografia de Coerência Óptica (OCT).<br>Utiliza o modelo pré-treinado Kermany, o qual dispõe de milhares de imagens de OCTs para treinamento da IA.</p><br><br>A Inteligência Artificial foi treinada para gerar 4 tipos de outputs:<br><b>- Diabetic Macular Edema (DME);<br>- Choroidal Neovascularization (CNV);<br>- Drusen;<br>- Normal.</b><br><br>* Informações do modelo: 288 camadas; 11.972.940 número total de weights; eficácia de 99,8%<br><br>PS: Toda probabilidade que for igual a 100% é arredondada!')
         dlg.setFont(QFont("Arial", 16))
         dlg.exec()
 
@@ -232,6 +232,7 @@ class Ui_MainWindow(QWidget):
 class Ui_PrevWindow(QWidget):
     def __init__(self):
         super().__init__()
+        self.old_key_state = Qt.NoModifier
         self.setWindowIcon(QIcon('icone.png'))
         self.resize(702, 544)
         self.setFixedSize(self.size())
@@ -257,9 +258,12 @@ class Ui_PrevWindow(QWidget):
             font = QFont()
             font.setPointSize(12)
             label = QLabel()
-            pixmap = QPixmap(self.ds.iloc[i, 0])
-            label.setPixmap(pixmap)
-            label.setScaledContents(True)
+            if os.path.isfile(self.ds.iloc[i, 0]):
+                pixmap = QPixmap(self.ds.iloc[i, 0])
+                label.setPixmap(pixmap)
+                label.setScaledContents(True)
+            else:
+                label.setText('Imagem não encontrada!\n\nLocal anterior:\n'+'('+str(self.ds.iloc[i, 0])+')')
             self.table.setCellWidget(i, 0, label)
 
             item1 = QTableWidgetItem(self.ds.iloc[i, 1].replace("[", "").replace("]", "").replace("'","").replace(",","").replace(" ","\n"))
@@ -285,6 +289,10 @@ class Ui_PrevWindow(QWidget):
         self.vBox.setAlignment(Qt.AlignCenter)
         self.setLayout(self.vBox)
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_W and event.modifiers() & Qt.ControlModifier:
+            self.close()
+
 
 
 class MainWindow(QMainWindow):
@@ -295,6 +303,15 @@ class MainWindow(QMainWindow):
         self.ui_prev = Ui_PrevWindow()
         self.setFixedSize(self.size())
 
+        self.old_key_state = Qt.NoModifier
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_W and event.modifiers() & Qt.ControlModifier:
+            self.close()
+        elif (event.key() == 16777220) or (event.key() == 43):
+            Ui_MainWindow.on_button_click(self)
+        elif event.key() == Qt.Key_H and event.modifiers() & Qt.ControlModifier:
+            Ui_MainWindow.abrirPrev(self)
 
 
     def show_new_window(self):
