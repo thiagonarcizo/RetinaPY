@@ -37,6 +37,6 @@ A aplicação que deve ser executada é a ```gui.pyw``` (Caso não seja Windos, 
 O programa salva em .csv os outputs em ordem cronológica. Contém a probabilidade de cada condição para cada foto selecionada.
 
 ## Créditos
-Idealizado por [Thiago Narcizo](https://github.com/thiagonarcizo/) e [Matheus Arthur](https://github.com/mathfaria)
+Idealizado por [Thiago Narcizo](https://github.com/thiagonarcizo/) e [Matheus Faria](https://github.com/mathfaria)
 > -   S. A. Kamran, S. Saha, A. S. Sabbir, A. Tavakkoli, "Optic-Net: A Novel Convolutional Neural Network for Diagnosis of Retinal Diseases from Optical Tomography Images," DOI: 10.1109/ICMLA.2019.00165 (2019)
 > - Disponível em: [https://github.com/SharifAmit/OpticNet-71](https://github.com/SharifAmit/OpticNet-71)
