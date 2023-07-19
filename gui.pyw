@@ -110,8 +110,6 @@ class Ui_MainWindow(QWidget):
 
     '''*******************
     CLIQUE DO BOTÃO DE ABRIR O HISTÓRICO PELO MENU:
-    ideia:
-    - filtrar os dados com pandas e mostrá-los de uma forma visualmente agradável
     *******************'''
     def abrirPrev(self):
         self.w = None
@@ -146,7 +144,7 @@ class Ui_MainWindow(QWidget):
         dlg.setWindowIcon(QIcon('icone.png'))
         dlg.setWindowTitle("Cr\u00e9ditos")
         dlg.setTextFormat(Qt.TextFormat.RichText)
-        dlg.setText('<p align=\"justify\">Idealizado e feito por <a href=\"https://github.com/thiagonarcizo/\">Thiago Narcizo</a> e por <a href=\"https://github.com/mathfaria\">Matheus Faria</a><br>com base no modelo de IA pré-treinada de OCT de <a href=\"https://www.sciencedirect.com/science/article/pii/S0092867418301545\">Kermany</a>.</p><br><br><a href=\"https://github.com/thiagonarcizo/RetinaPY\">Link do projeto no GitHub</a>')
+        dlg.setText('<p align=\"justify\">Idealizado e feito por <a href=\"https://github.com/thiagonarcizo/\">Thiago Narcizo</a> e por <a href=\"https://github.com/mathfaria\">Matheus Faria</a><br>com base no modelo de IA pré-treinada de OCT de <a href=\"https://www.sciencedirect.com/science/article/pii/S0092867418301545\">Kermany</a>.</p><br><br><a href=\"https://github.com/thiagonarcizo/RetinaPY\">Link do projeto no GitHub</a><br><br>Versão: 1.0.1')
         dlg.setFont(QFont("Arial", 16))
         dlg.exec()
 
@@ -239,54 +237,55 @@ class Ui_PrevWindow(QWidget):
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowMinMaxButtonsHint)
         self.setWindowFlag(Qt.WindowStaysOnTopHint, True)
         self.setWindowTitle('Previs\u00f5es anteriores')
-        self.ds = pd.read_csv('prev.csv', sep=';')
-        self.ds = self.ds[::-1]
-        self.rows = len(self.ds.index)
-        self.columns = len(self.ds.columns)
-        self.table = QTableWidget()
-        self.table.setRowCount(self.rows)
-        self.table.setColumnCount(self.columns)
-        self.table.setHorizontalHeaderLabels(["Imagem", "Condi\u00e7\u00e3o", "Probabilidade (%)", "Data"])
+        if os.path.isfile('prev.csv'):
+            self.ds = pd.read_csv('prev.csv', sep=';')
+            self.ds = self.ds[::-1]
+            self.rows = len(self.ds.index)
+            self.columns = len(self.ds.columns)
+            self.table = QTableWidget()
+            self.table.setRowCount(self.rows)
+            self.table.setColumnCount(self.columns)
+            self.table.setHorizontalHeaderLabels(["Imagem", "Condi\u00e7\u00e3o", "Probabilidade (%)", "Data"])
 
-        self.centralwidget = QWidget(self)
+            self.centralwidget = QWidget(self)
 
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+            self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
-        for i in range(self.rows):
-            self.table.setRowHeight(i, 100)
-            font = QFont()
-            font.setPointSize(12)
-            label = QLabel()
-            if os.path.isfile(self.ds.iloc[i, 0]):
-                pixmap = QPixmap(self.ds.iloc[i, 0])
-                label.setPixmap(pixmap)
-                label.setScaledContents(True)
-            else:
-                label.setText('Imagem não encontrada!\n\nLocal anterior:\n'+'('+str(self.ds.iloc[i, 0])+')')
-            self.table.setCellWidget(i, 0, label)
+            for i in range(self.rows):
+                self.table.setRowHeight(i, 100)
+                font = QFont()
+                font.setPointSize(12)
+                label = QLabel()
+                if os.path.isfile(self.ds.iloc[i, 0]):
+                    pixmap = QPixmap(self.ds.iloc[i, 0])
+                    label.setPixmap(pixmap)
+                    label.setScaledContents(True)
+                else:
+                    label.setText('Imagem não encontrada!\n\nLocal anterior:\n'+'('+str(self.ds.iloc[i, 0])+')')
+                self.table.setCellWidget(i, 0, label)
 
-            item1 = QTableWidgetItem(self.ds.iloc[i, 1].replace("[", "").replace("]", "").replace("'","").replace(",","").replace(" ","\n"))
-            item1.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            item1.setFont(font)
-            self.table.setItem(i, 1, item1)
+                item1 = QTableWidgetItem(self.ds.iloc[i, 1].replace("[", "").replace("]", "").replace("'","").replace(",","").replace(" ","\n"))
+                item1.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                item1.setFont(font)
+                self.table.setItem(i, 1, item1)
 
-            item2 = QTableWidgetItem(str(self.ds.iloc[i, 2].replace("[", "").replace("]", "").replace("'","").replace(",","").replace(" ","\n")))
-            item2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            item2.setFont(font)
-            self.table.setItem(i, 2, item2)
+                item2 = QTableWidgetItem(str(self.ds.iloc[i, 2].replace("[", "").replace("]", "").replace("'","").replace(",","").replace(" ","\n")))
+                item2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                item2.setFont(font)
+                self.table.setItem(i, 2, item2)
 
-            data = datetime.strptime(self.ds.iloc[i, 3], "%Y-%m-%d %H:%M:%S.%f").strftime("%d/%m/%Y às %H:%M")
-            item3 = QTableWidgetItem(data)
-            item3.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            item3.setFont(font)
-            self.table.setItem(i, 3, item3)
+                data = datetime.strptime(self.ds.iloc[i, 3], "%Y-%m-%d %H:%M:%S.%f").strftime("%d/%m/%Y às %H:%M")
+                item3 = QTableWidgetItem(data)
+                item3.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                item3.setFont(font)
+                self.table.setItem(i, 3, item3)
 
-        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+            self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
-        self.vBox = QVBoxLayout(self.centralwidget)
-        self.vBox.addWidget(self.table)
-        self.vBox.setAlignment(Qt.AlignCenter)
-        self.setLayout(self.vBox)
+            self.vBox = QVBoxLayout(self.centralwidget)
+            self.vBox.addWidget(self.table)
+            self.vBox.setAlignment(Qt.AlignCenter)
+            self.setLayout(self.vBox)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_W and event.modifiers() & Qt.ControlModifier:
@@ -314,9 +313,18 @@ class MainWindow(QMainWindow):
 
 
     def show_new_window(self):
-        if self.w is None:
-            self.w = Ui_PrevWindow()
-        self.w.show()
+        if os.path.isfile('prev.csv'):
+            if self.w is None:
+                self.w = Ui_PrevWindow()
+            self.w.show()
+        else:
+            dlg = QMessageBox(self)
+            dlg.setWindowIcon(QIcon('icone.png'))
+            dlg.setWindowTitle("Erro!")
+            dlg.setTextFormat(Qt.TextFormat.RichText)
+            dlg.setText('<p>O arquivo de histórico não foi encontrado.</p>')
+            dlg.setFont(QFont("Arial", 20))
+            dlg.exec()
 
 
     def get_darkModePalette(app=None):
