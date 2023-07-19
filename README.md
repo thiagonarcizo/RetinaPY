@@ -32,7 +32,7 @@ A aplicação que deve ser executada é a ```gui.pyw``` (Caso não seja Windows,
 ![Print de tela do histórico de outputs do programa](https://i.imgur.com/qEtxaif.png)
 
 
-## Log em .csv
+## Histórico em .csv
 
 O programa salva em .csv os outputs em ordem cronológica. Contém a probabilidade de cada condição para cada foto selecionada.
 
