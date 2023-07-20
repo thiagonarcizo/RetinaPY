@@ -34,7 +34,7 @@ A aplicação que deve ser executada é a ```gui.pyw``` (Caso não seja Windows,
 
 ## Histórico em .csv
 
-O programa salva em .csv os outputs em ordem cronológica. Contém a probabilidade de cada condição para cada foto selecionada.
+O programa salva em .csv os outputs em ordem cronológica. Contém a probabilidade de cada condição para cada imagem selecionada.
 
 ## Créditos
 Idealizado por [Thiago Narcizo](https://github.com/thiagonarcizo/) e [Matheus Faria](https://github.com/mathfaria)
